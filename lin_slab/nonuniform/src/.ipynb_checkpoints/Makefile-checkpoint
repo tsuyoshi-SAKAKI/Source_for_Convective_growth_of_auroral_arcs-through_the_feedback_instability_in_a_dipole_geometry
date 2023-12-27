@@ -1,0 +1,75 @@
+# for FX100
+
+# FFC = mpifrt
+FFC = mpifrtpx
+
+FFLAGS = -fw -Kfast,parallel -Kocl -Qt -Cpp
+# FFLAGS = -fw -Kfast,parallel -Kocl -Qt -Cpp -Haefosux
+
+## FFC = mpifrtpx
+## FFLAGS = -Kfast -Cpp
+## FFLAGS = -Kfast,parallel -Cpp
+## FFLAGS = -Kfast,parallel,openmp -Cpp
+
+LIB = -SSL2 -lfftw3 -lm -SSL2BLAMP
+
+SRC = ../src/
+MYL = ../src/
+CWD = ./
+OUT = rmhdfs.exe
+
+MATH = rmhdfs_r0.1_math
+# MATRIX = LB_m2.0_matrix
+MATRIX = LB_m2.1_matrix
+
+gkvp:	$(SRC)rmhdfs_r0.1_header.f90\
+	$(SRC)rmhdfs_r0.1_mpienv.f90\
+	$(MYL)$(MATH).f90\
+	$(MYL)$(MATRIX).f90\
+	$(SRC)rmhdfs_r0.1_clock.f90\
+	$(SRC)rmhdfs_r0.1_intgrl.f90\
+	$(SRC)rmhdfs_r0.1_bndry.f90\
+	$(SRC)rmhdfs_r0.1_pssn_fftw.f90\
+	$(SRC)rmhdfs_r0.1_fld.f90\
+	$(SRC)rmhdfs_r0.1_feedback.f90\
+	$(SRC)rmhdfs_r0.1_set.f90\
+	$(SRC)rmhdfs_r0.1_diag.f90\
+	$(SRC)rmhdfs_r0.1_advnc.f90\
+	$(SRC)rmhdfs_r0.1_main.f90
+	
+	$(FFC) $(FFLAGS) -c $(SRC)rmhdfs_r0.1_header.f90
+	$(FFC) $(FFLAGS) -c $(SRC)rmhdfs_r0.1_mpienv.f90
+	$(FFC) $(FFLAGS) -c $(MYL)$(MATH).f90 $(INC)
+	$(FFC) $(FFLAGS) -c $(MYL)$(MATRIX).f90
+	$(FFC) $(FFLAGS) -c $(SRC)rmhdfs_r0.1_clock.f90
+	$(FFC) $(FFLAGS) -c $(SRC)rmhdfs_r0.1_intgrl.f90
+	$(FFC) $(FFLAGS) -c $(SRC)rmhdfs_r0.1_bndry.f90
+	$(FFC) $(FFLAGS) -c $(SRC)rmhdfs_r0.1_pssn_fftw.f90 $(INC)
+	$(FFC) $(FFLAGS) -c $(SRC)rmhdfs_r0.1_fld.f90
+	$(FFC) $(FFLAGS) -c $(SRC)rmhdfs_r0.1_feedback.f90
+	$(FFC) $(FFLAGS) -c $(SRC)rmhdfs_r0.1_set.f90
+	$(FFC) $(FFLAGS) -c $(SRC)rmhdfs_r0.1_diag.f90
+	$(FFC) $(FFLAGS) -c $(SRC)rmhdfs_r0.1_advnc.f90
+	$(FFC) $(FFLAGS) -c $(SRC)rmhdfs_r0.1_main.f90
+	
+	$(FFC) $(FFLAGS) rmhdfs_r0.1_main.o\
+			rmhdfs_r0.1_header.o\
+			rmhdfs_r0.1_mpienv.o\
+			$(MATH).o\
+			$(MATRIX).o\
+			rmhdfs_r0.1_clock.o\
+			rmhdfs_r0.1_intgrl.o\
+			rmhdfs_r0.1_bndry.o\
+			rmhdfs_r0.1_fld.o\
+			rmhdfs_r0.1_feedback.o\
+			rmhdfs_r0.1_set.o\
+			rmhdfs_r0.1_diag.o\
+			rmhdfs_r0.1_pssn_fftw.o\
+			rmhdfs_r0.1_advnc.o\
+			-o $(OUT) $(LIB)
+
+clean:
+	rm -f ./*.o ./*.mod ./*.lst ./*.exe ./*.err ./*.out
+
+clear:
+	rm -f ./*.o ./*.mod ./*.lst ./*.err ./*.out
